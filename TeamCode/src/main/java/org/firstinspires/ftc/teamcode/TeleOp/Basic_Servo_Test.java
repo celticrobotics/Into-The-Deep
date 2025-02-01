@@ -16,7 +16,7 @@ public class Basic_Servo_Test extends LinearOpMode {
         //Servo Elbow;
 
         //Claw = hardwareMap.get(Servo.class, "Thing 1");
-        Servo = hardwareMap.get(Servo.class, "Claw wrist");
+        Servo = hardwareMap.get(Servo.class, "Elbow");
         //Elbow = hardwareMap.get(Servo.class, "Elbow");
 
         waitForStart();

@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name = "Qualifier Robot 1 Controller")
-public class Qualifier_OneController extends LinearOpMode {
+@TeleOp(name = "Provincials TeleOp")
+public class Provincials_Drive extends LinearOpMode {
 //    private final HardwareMap hardwareMap;
 //    private final Telemetry telemetry;
 //    private final Supplier<Boolean> opModeIsActive;
@@ -35,6 +35,8 @@ public class Qualifier_OneController extends LinearOpMode {
     private DcMotor FR;
     private DcMotor BL;
     private DcMotor BR;
+    private Servo ClawS;
+    private Servo ElbowS;
 
     DcMotor sideSlide;
     DcMotor upSlide;
@@ -70,6 +72,8 @@ public class Qualifier_OneController extends LinearOpMode {
         sideSlide.setTargetPosition(0);
         Hangup.setTargetPosition(0);
         Hang.setTargetPosition(0);
+        ClawS.setPosition(0.2);
+        ElbowS.setPosition(1);
 
         boolean hanging = false;
 
@@ -84,6 +88,8 @@ public class Qualifier_OneController extends LinearOpMode {
 
             if (gamepad1.left_stick_button) {
                 setSpeed = 1;
+            } else if (gamepad1.right_stick_button){
+                setSpeed = 0.25;
             } else {
                 setSpeed = 0.5;
             }
@@ -156,12 +162,15 @@ public class Qualifier_OneController extends LinearOpMode {
 
             // Dedicated hang buttons for endgame
 
-            if(gamepad1.start)
+            if(gamepad1.start && failSafe)
             {
                 failSafe = false;
+            } else if (gamepad1.start && !failSafe){
+                failSafe = true;
             }
 
-            if(gamepad1.right_stick_button && !failSafe) {
+            // Used to be gamepad1.right_stick_bumper && !failSafe
+            if(!failSafe) {
                 hanging = !hanging;
                 upSlidePos = 700;
                 Bucket.setPosition(0.5);
@@ -185,7 +194,22 @@ public class Qualifier_OneController extends LinearOpMode {
                 HangPos = 0;
             }
 
-
+            if(gamepad2.a){
+                //down
+                ElbowS.setPosition(1);
+            }
+            else if(gamepad2.y){
+                //scoring
+                ElbowS.setPosition(0.5);
+            }
+            if(gamepad2.x){
+                //open
+                ClawS.setPosition(0.2);
+            }
+            else if(gamepad2.b){
+                //closed
+                ClawS.setPosition(0.5);
+            }
 
             //Display telemetry
             getTelemetry();
@@ -229,6 +253,9 @@ public class Qualifier_OneController extends LinearOpMode {
         Elbow = hardwareMap.get(Servo.class, "Elbow");
         Claw = hardwareMap.get(Servo.class, "Thing 1");
         Bucket = hardwareMap.get(Servo.class, "Thing2");
+
+        ElbowS = hardwareMap.get(Servo.class, "Specimen Elbow");
+        ClawS = hardwareMap.get(Servo.class, "Specimen Claw");
 
         FL.setDirection(DcMotor.Direction.REVERSE);
         BL.setDirection(DcMotor.Direction.REVERSE);
