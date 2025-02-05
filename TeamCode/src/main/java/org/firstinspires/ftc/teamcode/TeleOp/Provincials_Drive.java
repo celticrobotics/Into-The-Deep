@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorREV2mDistance;
+
 @TeleOp(name = "Provincials TeleOp")
 public class Provincials_Drive extends LinearOpMode {
 //    private final HardwareMap hardwareMap;
@@ -47,6 +49,7 @@ public class Provincials_Drive extends LinearOpMode {
     Servo Elbow;
     Servo Claw;
     Servo Bucket;
+    SensorREV2mDistance Distance;
 
     private final ElapsedTime runtime = new ElapsedTime();
 
@@ -211,6 +214,26 @@ public class Provincials_Drive extends LinearOpMode {
                 ClawS.setPosition(0.5);
             }
 
+            // Distance sensor test code:
+
+            if(Distance > 10 && gamepad1.start)
+            {
+                BL.setPower(-0.2);
+                BR.setPower(-0.2);
+            }
+            else if(Distance < 10 && gamepad1.start)
+            {
+                BL.setPower(0.2);
+                BR.setPower(0.2);
+            }
+            else if(Distance == 10 && gamepad1.start)
+            {
+                BL.setPower(0);
+                BR.setPower(0);
+                upSlide.setTargetPosition(1900);
+
+            }
+
             //Display telemetry
             getTelemetry();
 
@@ -256,6 +279,8 @@ public class Provincials_Drive extends LinearOpMode {
 
         ElbowS = hardwareMap.get(Servo.class, "Specimen Elbow");
         ClawS = hardwareMap.get(Servo.class, "Specimen Claw");
+
+        Distance = hardwareMap.get(SensorREV2mDistance.class, "Distance");
 
         FL.setDirection(DcMotor.Direction.REVERSE);
         BL.setDirection(DcMotor.Direction.REVERSE);
@@ -303,6 +328,7 @@ public class Provincials_Drive extends LinearOpMode {
         telemetry.addData("Turbo:", setSpeed);
         telemetry.addData("Hang Prime Angle:", Hangup.getCurrentPosition());
         telemetry.addData("Hang Slides Position:", Hang.getCurrentPosition());
+        telemetry.addData("Distance from wall:", Distance);
         telemetry.update();
     }
 
