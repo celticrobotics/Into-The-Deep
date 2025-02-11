@@ -49,6 +49,7 @@ public class Provincials_Drive extends LinearOpMode {
     Servo Elbow;
     Servo Claw;
     Servo Bucket;
+    Servo clawElbow;
     SensorREV2mDistance Distance;
 
     private final ElapsedTime runtime = new ElapsedTime();
@@ -129,13 +130,15 @@ public class Provincials_Drive extends LinearOpMode {
             if (gamepad1.right_bumper) {
                 //Elbow up
                 Elbow.setPosition(0.65);
+                clawElbow.setPosition(0.783);
             } else if (gamepad1.left_bumper) {
                 //Elbow down
-                Elbow.setPosition(0.02);
+                Elbow.setPosition(0.2157);
+                clawElbow.setPosition(0.1823);
             }
             else if(sideSlide.getCurrentPosition() > 10)
             {
-                Elbow.setPosition(0.17);
+                Elbow.setPosition(0.3);
             }
             else if(gamepad1.right_bumper && sideSlide.getCurrentPosition() > 10)
             {
@@ -155,7 +158,7 @@ public class Provincials_Drive extends LinearOpMode {
             if (gamepad1.dpad_up) {
                 upSlidePos = 4000;
             } else if (gamepad1.dpad_down) {
-                upSlidePos = 400;
+                upSlidePos = 0;
             }
 
             if(upSlide.getCurrentPosition() > 600)
@@ -214,31 +217,43 @@ public class Provincials_Drive extends LinearOpMode {
                 ClawS.setPosition(0.5);
             }
 
-            // Distance sensor test code:
-
-            if(Distance > 10 && gamepad1.start)
+            if(gamepad2.dpad_up)
             {
-                BL.setPower(-0.2);
-                BR.setPower(-0.2);
+                upSlidePos = 1900;
             }
-            else if(Distance < 10 && gamepad1.start)
+            else if(gamepad2.dpad_down)
             {
-                BL.setPower(0.2);
-                BR.setPower(0.2);
-            }
-            else if(Distance == 10 && gamepad1.start)
-            {
-                BL.setPower(0);
-                BR.setPower(0);
-                upSlide.setTargetPosition(1900);
-
+                upSlidePos = 1300;
             }
 
-            //Display telemetry
-            getTelemetry();
+            //0.17 Elbow down
+            // 0.70 Elbow up
+
+                // Distance sensor test code:
+
+//            if(Distance > 10 && gamepad1.start)
+//            {
+//                BL.setPower(-0.2);
+//                BR.setPower(-0.2);
+//            }
+//            else if(Distance < 10 && gamepad1.start)
+//            {
+//                BL.setPower(0.2);
+//                BR.setPower(0.2);
+//            }
+//            else if(Distance == 10 && gamepad1.start)
+//            {
+//                BL.setPower(0);
+//                BR.setPower(0);
+//                upSlide.setTargetPosition(1900);
+//
+//            }
+
+                //Display telemetry
+                getTelemetry();
 
             // Slide Constraints --> SIDE SLIDE MUST BE BELOW 1900 FOR COMP (Horizontal expansion limit)
-            upSlidePos = Range.clip(upSlidePos, 400, 4000);
+            upSlidePos = Range.clip(upSlidePos, 0, 4000);
             upSlide.setTargetPosition(upSlidePos);
             sideSlidePos = Math.max(0, Math.min(1900, sideSlidePos));
 
@@ -276,11 +291,12 @@ public class Provincials_Drive extends LinearOpMode {
         Elbow = hardwareMap.get(Servo.class, "Elbow");
         Claw = hardwareMap.get(Servo.class, "Thing 1");
         Bucket = hardwareMap.get(Servo.class, "Thing2");
+        clawElbow = hardwareMap.get(Servo.class, "Claw Elbow");
 
         ElbowS = hardwareMap.get(Servo.class, "Specimen Elbow");
         ClawS = hardwareMap.get(Servo.class, "Specimen Claw");
 
-        Distance = hardwareMap.get(SensorREV2mDistance.class, "Distance");
+        //Distance = hardwareMap.get(SensorREV2mDistance.class, "Distance");
 
         FL.setDirection(DcMotor.Direction.REVERSE);
         BL.setDirection(DcMotor.Direction.REVERSE);
