@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -51,6 +52,8 @@ public class Provincials_Drive extends LinearOpMode {
     Servo Bucket;
     Servo clawElbow;
     SensorREV2mDistance Distance;
+    RevTouchSensor Touch;
+
 
     private final ElapsedTime runtime = new ElapsedTime();
 
@@ -69,7 +72,8 @@ public class Provincials_Drive extends LinearOpMode {
         waitForStart();
 
         Claw.setPosition(0.2);
-        Elbow.setPosition(0.02);
+        Elbow.setPosition(0.182);
+        clawElbow.setPosition(0.181);
         Wrist.setPosition(0);
         upSlide.setTargetPosition(400);
         Bucket.setPosition(0);
@@ -102,10 +106,15 @@ public class Provincials_Drive extends LinearOpMode {
 
             // Control slides by tic increase
             if (gamepad1.dpad_right) {
-                sideSlidePos = 1900;
+                sideSlidePos = 600;
 
-            } else if (gamepad1.dpad_left) {
+            } else if (gamepad1.dpad_left && !Touch.isPressed()) {
                 sideSlidePos = 0;
+            }
+            if(Touch.isPressed())
+            {
+                sideSlidePos = 0;
+                telemetry.addData("Pos", " = 0!");
             }
 
             //Claw Control
@@ -127,22 +136,28 @@ public class Provincials_Drive extends LinearOpMode {
             }
 
             // Elbow Control
-            if (gamepad1.right_bumper) {
-                //Elbow up
-                Elbow.setPosition(0.65);
-                clawElbow.setPosition(0.783);
-            } else if (gamepad1.left_bumper) {
-                //Elbow down
-                Elbow.setPosition(0.2157);
-                clawElbow.setPosition(0.1823);
+            if (gamepad1.right_bumper && upSlidePos < 10)
+            {
+                //Elbow up && Slides retracted
+                Elbow.setPosition(0.56);
+                clawElbow.setPosition(1);
+            } else if (sideSlide.getCurrentPosition() <= 10 && gamepad1.left_bumper)
+            {
+                //Elbow down + Slides retracted
+                Elbow.setPosition(0.182);
+                clawElbow.setPosition(0.181);
+            }
+            else if(sideSlide.getCurrentPosition() > 10 && gamepad1.left_bumper)
+            {
+                //Elbow down + Slides extended
+                Elbow.setPosition(0.161);
+                clawElbow.setPosition(0.194);
             }
             else if(sideSlide.getCurrentPosition() > 10)
             {
-                Elbow.setPosition(0.3);
-            }
-            else if(gamepad1.right_bumper && sideSlide.getCurrentPosition() > 10)
-            {
-                Elbow.setPosition(0.4);
+                // Slides extended + Elbows up
+                Elbow.setPosition(0.299);
+                clawElbow.setPosition(0);
             }
 
             if(gamepad1.y)
@@ -255,7 +270,7 @@ public class Provincials_Drive extends LinearOpMode {
             // Slide Constraints --> SIDE SLIDE MUST BE BELOW 1900 FOR COMP (Horizontal expansion limit)
             upSlidePos = Range.clip(upSlidePos, 0, 4000);
             upSlide.setTargetPosition(upSlidePos);
-            sideSlidePos = Math.max(0, Math.min(1900, sideSlidePos));
+            sideSlidePos = Math.max(0, Math.min(550, sideSlidePos));
 
             HangPos = Range.clip(HangPos, hanged ? 1000 : 0, 16000);
             Hang.setTargetPosition(HangPos);
@@ -287,7 +302,7 @@ public class Provincials_Drive extends LinearOpMode {
         Hangup = hardwareMap.get(DcMotor.class, "Hangup");
         Hang = hardwareMap.get(DcMotor.class, "Hang");
 
-        Wrist = hardwareMap.get(Servo.class, "Claw wrist");
+        Wrist = hardwareMap.get(Servo.class, "Claw Wrist");
         Elbow = hardwareMap.get(Servo.class, "Elbow");
         Claw = hardwareMap.get(Servo.class, "Thing 1");
         Bucket = hardwareMap.get(Servo.class, "Thing2");
@@ -297,6 +312,7 @@ public class Provincials_Drive extends LinearOpMode {
         ClawS = hardwareMap.get(Servo.class, "Specimen Claw");
 
         //Distance = hardwareMap.get(SensorREV2mDistance.class, "Distance");
+        Touch = hardwareMap.get(RevTouchSensor.class, "Penis");
 
         FL.setDirection(DcMotor.Direction.REVERSE);
         BL.setDirection(DcMotor.Direction.REVERSE);

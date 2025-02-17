@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.Sensor;
 // Each button controls all individual usages
 // Colour Sensor integration
 
-@Disabled
 @TeleOp(name = "Arm Test")
 public class Arm_Test extends LinearOpMode {
 
@@ -27,7 +26,7 @@ public class Arm_Test extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         //HardwareMap
-        Arm = hardwareMap.get(DcMotor.class,"arm");
+        Arm = hardwareMap.get(DcMotor.class,"sideSlide");
 
 
         //Declare motor position variables
@@ -52,10 +51,10 @@ public class Arm_Test extends LinearOpMode {
         while(opModeIsActive()) {
 
             if(gamepad1.a){
-                Arm.setPower(1);
+                Arm.setPower(0.5);
             }
             else if(gamepad1.y){
-                Arm.setPower(-1);
+                Arm.setPower(-0.5);
             }
             else{
                 Arm.setPower(0);
