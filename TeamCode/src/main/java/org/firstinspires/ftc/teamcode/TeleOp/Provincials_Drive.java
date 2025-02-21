@@ -186,7 +186,9 @@ public class Provincials_Drive extends LinearOpMode {
             if(gamepad1.start && failSafe)
             {
                 failSafe = false;
-            } else if (gamepad1.start && !failSafe){
+            }
+            else if(gamepad1.start && !failSafe)
+            {
                 failSafe = true;
             }
 
@@ -207,6 +209,10 @@ public class Provincials_Drive extends LinearOpMode {
             {
                 Bucket.setPosition(0.6);
             }
+            else if(!failSafe)
+            {
+                Bucket.setPosition(0.5);
+            }
             else if(gamepad1.right_trigger < 0.2) // if not pressed go to 0.1 and not primed for hang
             {
                 Bucket.setPosition(0.1);
@@ -217,8 +223,9 @@ public class Provincials_Drive extends LinearOpMode {
                 HangPos = 16000;
                 hanged = true;
             }
-            else if(hanged){
+            else if(hanged && HangPos >= 15000){
                 HangPos = 3000;
+//                failSafe = true;
             }
             else {
                 HangPos = 0;
