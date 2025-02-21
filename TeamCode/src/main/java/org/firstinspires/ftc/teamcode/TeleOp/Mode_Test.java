@@ -11,8 +11,8 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.SensorREV2mDistance;
 
-@TeleOp(name = "Provincials TeleOp")
-public class Provincials_Drive extends LinearOpMode {
+@TeleOp(name = "Mode Test")
+public class Mode_Test extends LinearOpMode {
 
 // CONTROLS FOR 1 GAME PAD:
 // Buttons: X Close Claw
@@ -62,7 +62,7 @@ public class Provincials_Drive extends LinearOpMode {
     int upSlidePos;
     double setSpeed = 0.5;
     int HangPos;
-
+    boolean myMode;
     boolean failSafe = true;
 
     @Override
@@ -88,12 +88,17 @@ public class Provincials_Drive extends LinearOpMode {
 
         boolean hanged = false;
 
-
         while (opModeIsActive()) {
             sideSlide.setPower(1);
             upSlide.setPower(1);
             Hangup.setPower(1);
             Hang.setPower(1);
+
+            if (gamepad1.back && gamepad1.x){
+                myMode = true; // sample mode
+            } else if (gamepad1.back && gamepad1.y){
+                myMode = false; // specimen mode
+            }
 
             if (gamepad1.left_stick_button) {
                 setSpeed = 1;
@@ -105,82 +110,85 @@ public class Provincials_Drive extends LinearOpMode {
 
             Move(setSpeed);
 
-            // Control slides by tic increase
-            if (gamepad1.dpad_right || gamepad1.dpad_up || gamepad1.y) {
-                sideSlidePos = 600;
+            if (myMode) {
+                if (gamepad1.a) {
+                    //Sample Horizontal
+                    Wrist.setPosition(0.28);
+                } else {
+                    //Sample Vertical
+                    Wrist.setPosition(0);
+                }
 
-            } else if (gamepad1.dpad_left && !Touch.isPressed()) {
-                sideSlidePos -= 20;
+                //Claw Control
+                if (gamepad1.b) {
+                    // Open
+                    Claw.setPosition(0.1);
+                } else if (gamepad1.x) {
+                    //Closed
+                    Claw.setPosition(0.45);
+                }
+
+                if (gamepad1.dpad_right || gamepad1.dpad_up || gamepad1.y) {
+                    sideSlidePos = 600;
+
+                } else if (gamepad1.dpad_left && !Touch.isPressed()) {
+                    sideSlidePos -= 20;
+                }
+                if (Touch.isPressed()) {
+                    sideSlide.setPower(0.01);
+                    sideSlidePos = 0;
+                    sideSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    telemetry.addData("Pos", " = 0!");
+                } else {
+                    sideSlide.setPower(1);
+                }
+
+                if(gamepad1.y)
+                {
+                    upSlidePos = 2000;
+                }
+
+                // Bucket Control
+                //Bucket.setPosition(gamepad1.right_trigger);
+                // No pressure = 0 --> down
+                // Pressure = 1 --> up
+
+                if (gamepad1.dpad_up) {
+                    upSlidePos = 4000;
+                } else if (gamepad1.dpad_down) {
+                    upSlidePos = 0;
+                }
             }
-            if(Touch.isPressed())
+            else
             {
-                sideSlide.setPower(0.01);
-                sideSlidePos = 0;
-                sideSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                telemetry.addData("Pos", " = 0!");
-            } else {
-                sideSlide.setPower(1);
+                if(gamepad1.a){
+                    //down
+                    ElbowS.setPosition(1);
+                }
+                else if(gamepad1.y){
+                    //scoring
+                    ElbowS.setPosition(0.5);
+                }
+                if(gamepad1.x){
+                    //open
+                    ClawS.setPosition(0.05);
+                }
+                else if(gamepad1.b){
+                    //closed
+                    ClawS.setPosition(0.5);
+                }
+
+                if(gamepad1.dpad_up)
+                {
+                    upSlidePos = 1900;
+                }
+                else if(gamepad1.dpad_down)
+                {
+                    upSlidePos = 1000;
+                }
             }
 
-            //Claw Control
-            if (gamepad1.b) {
-                // Open
-                Claw.setPosition(0.1);
-            } else if (gamepad1.x) {
-                //Closed
-                Claw.setPosition(0.45);
-            }
-
-            // Wrist control
-            if (gamepad1.a) {
-                //Sample Horizontal
-                Wrist.setPosition(0.28);
-            } else {
-                //Sample Vertical
-                Wrist.setPosition(0);
-            }
-
-            // Elbow Control
-            if (gamepad1.right_bumper)
-            {
-                //Elbow up && Slides retracted
-                Elbow.setPosition(0.559);
-                clawElbow.setPosition(0.899);
-            } else if (sideSlide.getCurrentPosition() <= 10 && gamepad1.left_bumper)
-            {
-                //Elbow down + Slides retracted
-                Elbow.setPosition(0.145);
-                clawElbow.setPosition(0.17);
-            }
-            else if(sideSlide.getCurrentPosition() > 10 && gamepad1.left_bumper)
-            {
-                //Elbow down + Slides extended
-                Elbow.setPosition(0.151);
-                clawElbow.setPosition(0.17);
-            }
-            else if(sideSlide.getCurrentPosition() > 10)
-            {
-                // Slides extended + Elbows up
-                Elbow.setPosition(0.299);
-                clawElbow.setPosition(0);
-            }
-
-            if(gamepad1.y)
-            {
-                upSlidePos = 2000;
-            }
-
-            // Bucket Control
-            //Bucket.setPosition(gamepad1.right_trigger);
-            // No pressure = 0 --> down
-            // Pressure = 1 --> up
-
-            if (gamepad1.dpad_up) {
-                upSlidePos = 4000;
-            } else if (gamepad1.dpad_down) {
-                upSlidePos = 0;
-            }
-
+            // General buttons
             // Dedicated hang buttons for endgame
 
             if(gamepad1.start && failSafe) {
@@ -225,36 +233,10 @@ public class Provincials_Drive extends LinearOpMode {
                 HangPos = 0;
             }
 
-            if(gamepad2.a){
-                //down
-                ElbowS.setPosition(1);
-            }
-            else if(gamepad2.y){
-                //scoring
-                ElbowS.setPosition(0.5);
-            }
-            if(gamepad2.x){
-                //open
-                ClawS.setPosition(0.05);
-            }
-            else if(gamepad2.b){
-                //closed
-                ClawS.setPosition(0.5);
-            }
-
-            if(gamepad2.dpad_up)
-            {
-                upSlidePos = 1900;
-            }
-            else if(gamepad2.dpad_down)
-            {
-                upSlidePos = 1000;
-            }
-
             //0.17 Elbow down
             // 0.70 Elbow up
 
-                // Distance sensor test code:
+            // Distance sensor test code:
 
 //            if(Distance > 10 && gamepad1.start)
 //            {
@@ -276,8 +258,8 @@ public class Provincials_Drive extends LinearOpMode {
 
 //            }
 
-                //Display telemetry
-                getTelemetry();
+            //Display telemetry
+            getTelemetry();
 
             // Slide Constraints --> SIDE SLIDE MUST BE BELOW 1900 FOR COMP (Horizontal expansion limit)
             upSlidePos = Range.clip(upSlidePos, 0, 4000);
@@ -364,6 +346,11 @@ public class Provincials_Drive extends LinearOpMode {
 
     //Display telemetry during opMode: All servos and both slides positions
     public void getTelemetry() {
+        if (myMode){
+            telemetry.addLine("You are in 'sample mode'\n");
+        } else {
+            telemetry.addLine("You are in 'specimen mode'\n");
+        }
         telemetry.addData("Elbow", Elbow.getPosition());
         telemetry.addData("Wrist", Wrist.getPosition());
         telemetry.addData("Claw", Claw.getPosition());
