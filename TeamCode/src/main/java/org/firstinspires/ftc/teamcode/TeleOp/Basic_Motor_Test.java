@@ -19,8 +19,8 @@ public class Basic_Motor_Test extends LinearOpMode {
         double SlidePos;
         RevTouchSensor Touch;
 
-        Slide = (DcMotorEx) hardwareMap.get(DcMotor.class, "sideSlide");
-        Touch = hardwareMap.get(RevTouchSensor.class, "Penis");
+        Slide = (DcMotorEx) hardwareMap.get(DcMotor.class, "Hangup");
+        //Touch = hardwareMap.get(RevTouchSensor.class, "Touch");
 
         //Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //Slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -45,15 +45,15 @@ public class Basic_Motor_Test extends LinearOpMode {
             {
                 SlidePos += 1;
             }
-            else if(gamepad1.y && !Touch.isPressed())
+            else if(gamepad1.y)
             {
                 SlidePos -= 1;
             }
-            if(Touch.isPressed())
-            {
-                SlidePos = 0;
-                telemetry.addData("Pos", " = 0!");
-            }
+//            if(Touch.isPressed())
+//            {
+//                SlidePos = 0;
+//                telemetry.addData("Pos", " = 0!");
+//            }
 
             Slide.setTargetPosition((int)SlidePos);
             Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);

@@ -197,7 +197,7 @@ public class Provincials_Drive extends LinearOpMode {
                 hanging = !hanging;
                 upSlidePos = 700;
                 Bucket.setPosition(0.5);
-                Hangup.setTargetPosition(600);
+                Hangup.setTargetPosition(740);
 
             }
             else if (!hanging){
@@ -205,11 +205,11 @@ public class Provincials_Drive extends LinearOpMode {
                 Hangup.setTargetPosition(0);
             }
 
-            if(gamepad1.right_trigger > 0.5) // if right trigger pressed go to 0.6
+            if(gamepad1.right_trigger > 0.5) // if right trigger is held go to 0.6
             {
                 Bucket.setPosition(0.6);
             }
-            else if(!failSafe)
+            else if(!failSafe) // if start is pressed go to 0.5
             {
                 Bucket.setPosition(0.5);
             }
