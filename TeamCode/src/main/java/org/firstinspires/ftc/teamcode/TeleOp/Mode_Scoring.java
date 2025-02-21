@@ -11,8 +11,8 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.SensorREV2mDistance;
 
-@TeleOp(name = "Provincials TeleOp")
-public class Provincials_Drive extends LinearOpMode {
+@TeleOp(name = "Mode Scoring")
+public class Mode_Scoring extends LinearOpMode {
 
 // CONTROLS FOR 1 GAME PAD:
 // Buttons: X Close Claw
@@ -21,19 +21,14 @@ public class Provincials_Drive extends LinearOpMode {
 //          Y Wrist for Sample Vertical
 
 // Left stick and Right stick: Chassis movement
-// Hold Left_Stick_Button: Turbo
-// Hold Right_Stick_Button:
 
-// Dpad: Up: upSlide up to pos 4000
-//       Down: upSlide down to 0
-//       Right: sideSlide extract to 550
-//       Left: sideSlide retract until 0
+// Dpad: Up: upSlide up
+//       Down: upSlide down
+//       Right: sideSlide extract
+//       Left: sideSlide retract
 
 // Stick Button: Right: Elbow Up
 //               Left: Elbow Down
-
-// Start Button: Prime Hang
-//
 
     private DcMotor FL;
     private DcMotor FR;
@@ -73,10 +68,10 @@ public class Provincials_Drive extends LinearOpMode {
         waitForStart();
 
         Claw.setPosition(0.2);
-        Elbow.setPosition(0.151);
-        clawElbow.setPosition(0.17);
+        Elbow.setPosition(0.182);
+        clawElbow.setPosition(0.181);
         Wrist.setPosition(0);
-        upSlide.setTargetPosition(0);
+        upSlide.setTargetPosition(400);
         Bucket.setPosition(0.1);
         sideSlide.setTargetPosition(0);
         Hangup.setTargetPosition(0);
@@ -107,19 +102,15 @@ public class Provincials_Drive extends LinearOpMode {
 
             // Control slides by tic increase
             if (gamepad1.dpad_right) {
-                sideSlidePos = 600;
+                sideSlidePos = 550;
 
             } else if (gamepad1.dpad_left && !Touch.isPressed()) {
                 sideSlidePos -= 20;
             }
             if(Touch.isPressed())
             {
-                sideSlide.setPower(0.01);
                 sideSlidePos = 0;
-                sideSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 telemetry.addData("Pos", " = 0!");
-            } else {
-                sideSlide.setPower(1);
             }
 
             //Claw Control
@@ -141,22 +132,22 @@ public class Provincials_Drive extends LinearOpMode {
             }
 
             // Elbow Control
-            if (gamepad1.right_bumper)
+            if (gamepad1.right_bumper && upSlidePos < 10)
             {
                 //Elbow up && Slides retracted
-                Elbow.setPosition(0.559);
-                clawElbow.setPosition(0.899);
+                Elbow.setPosition(0.56);
+                clawElbow.setPosition(1);
             } else if (sideSlide.getCurrentPosition() <= 10 && gamepad1.left_bumper)
             {
                 //Elbow down + Slides retracted
-                Elbow.setPosition(0.145);
-                clawElbow.setPosition(0.17);
+                Elbow.setPosition(0.182);
+                clawElbow.setPosition(0.181);
             }
             else if(sideSlide.getCurrentPosition() > 10 && gamepad1.left_bumper)
             {
                 //Elbow down + Slides extended
-                Elbow.setPosition(0.151);
-                clawElbow.setPosition(0.17);
+                Elbow.setPosition(0.182);
+                clawElbow.setPosition(0.181);
             }
             else if(sideSlide.getCurrentPosition() > 10)
             {
@@ -181,6 +172,11 @@ public class Provincials_Drive extends LinearOpMode {
                 upSlidePos = 0;
             }
 
+            if(upSlide.getCurrentPosition() > 600)
+            {
+                Elbow.setPosition(0.02);
+            }
+
             // Dedicated hang buttons for endgame
 
             if(gamepad1.start && failSafe)
@@ -195,7 +191,7 @@ public class Provincials_Drive extends LinearOpMode {
                 hanging = !hanging;
                 upSlidePos = 700;
                 Bucket.setPosition(0.5);
-                Hangup.setTargetPosition(600);
+                Hangup.setTargetPosition(540);
 
             }
             else if (!hanging){
@@ -234,7 +230,7 @@ public class Provincials_Drive extends LinearOpMode {
             }
             if(gamepad2.x){
                 //open
-                ClawS.setPosition(0.05);
+                ClawS.setPosition(0.2);
             }
             else if(gamepad2.b){
                 //closed
@@ -247,13 +243,13 @@ public class Provincials_Drive extends LinearOpMode {
             }
             else if(gamepad2.dpad_down)
             {
-                upSlidePos = 1000;
+                upSlidePos = 1300;
             }
 
             //0.17 Elbow down
             // 0.70 Elbow up
 
-                // Distance sensor test code:
+            // Distance sensor test code:
 
 //            if(Distance > 10 && gamepad1.start)
 //            {
@@ -275,8 +271,8 @@ public class Provincials_Drive extends LinearOpMode {
 
 //            }
 
-                //Display telemetry
-                getTelemetry();
+            //Display telemetry
+            getTelemetry();
 
             // Slide Constraints --> SIDE SLIDE MUST BE BELOW 1900 FOR COMP (Horizontal expansion limit)
             upSlidePos = Range.clip(upSlidePos, 0, 4000);
