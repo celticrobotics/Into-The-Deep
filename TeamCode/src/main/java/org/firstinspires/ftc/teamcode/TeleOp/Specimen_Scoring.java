@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.hardware.rev.RevTouchSensor;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,9 +11,8 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.SensorREV2mDistance;
 
-@Disabled
-@TeleOp(name = "Mode Scoring")
-public class Mode_Scoring extends LinearOpMode {
+@TeleOp(name = "Specimen Provincials")
+public class Specimen_Scoring extends LinearOpMode {
 
 // CONTROLS FOR 1 GAME PAD:
 // Buttons: X Close Claw
@@ -23,14 +21,19 @@ public class Mode_Scoring extends LinearOpMode {
 //          Y Wrist for Sample Vertical
 
 // Left stick and Right stick: Chassis movement
+// Hold Left_Stick_Button: Turbo
+// Hold Right_Stick_Button:
 
-// Dpad: Up: upSlide up
-//       Down: upSlide down
-//       Right: sideSlide extract
-//       Left: sideSlide retract
+// Dpad: Up: upSlide up to pos 4000
+//       Down: upSlide down to 0
+//       Right: sideSlide extract to 550
+//       Left: sideSlide retract until 0
 
 // Stick Button: Right: Elbow Up
 //               Left: Elbow Down
+
+// Start Button: Prime Hang
+//
 
     private DcMotor FL;
     private DcMotor FR;
@@ -59,7 +62,7 @@ public class Mode_Scoring extends LinearOpMode {
     int upSlidePos;
     double setSpeed = 0.5;
     int HangPos;
-
+    boolean myMode;
     boolean failSafe = true;
 
     @Override
@@ -70,29 +73,34 @@ public class Mode_Scoring extends LinearOpMode {
         waitForStart();
 
         Claw.setPosition(0.2);
-        Elbow.setPosition(0.182);
-        clawElbow.setPosition(0.181);
+        Elbow.setPosition(0.151);
+        clawElbow.setPosition(0.17);
         Wrist.setPosition(0);
-        upSlide.setTargetPosition(400);
+        upSlide.setTargetPosition(0);
         Bucket.setPosition(0.1);
         sideSlide.setTargetPosition(0);
         Hangup.setTargetPosition(0);
         Hang.setTargetPosition(0);
-        ClawS.setPosition(0.2);
-        ElbowS.setPosition(1);
+        ClawS.setPosition(0.5);
+        ElbowS.setPosition(0.9);
 
         boolean hanging = false;
 
         boolean hanged = false;
-
 
         while (opModeIsActive()) {
             sideSlide.setPower(1);
             upSlide.setPower(1);
             Hangup.setPower(1);
             Hang.setPower(1);
+//
+//            if (gamepad1.back && gamepad1.y){
+//                myMode = true; // sample mode
+//            } else if (gamepad1.back && gamepad1.x){
+//                myMode = false; // specimen mode
+//                ElbowS.setPosition(1);
+//            }
 
-            // Turbo/snail mode
             if (gamepad1.left_stick_button) {
                 setSpeed = 1;
             } else if (gamepad1.right_stick_button){
@@ -103,17 +111,40 @@ public class Mode_Scoring extends LinearOpMode {
 
             Move(setSpeed);
 
-            // Control slides by tic increase
-            if (gamepad1.dpad_right) {
-                sideSlidePos = 550;
-
-            } else if (gamepad1.dpad_left && !Touch.isPressed()) {
-                sideSlidePos -= 20;
+            if(gamepad1.left_bumper){
+                //down
+                ElbowS.setPosition(0.9);
             }
-            if(Touch.isPressed())
+            else if(gamepad1.right_bumper){
+                    //scoring
+                ElbowS.setPosition(0.5);
+            }
+            if(gamepad1.b){
+                //open
+                ClawS.setPosition(0.05);
+            }
+            else if(gamepad1.x){
+                //closed
+                ClawS.setPosition(0.5);
+            }
+            if(gamepad1.dpad_up)
             {
-                sideSlidePos = 0;
-                //telemetry.addData("Pos", " = 0!");
+                ClawS.setPosition(0.5);
+                upSlidePos = 1900;
+            }
+            else if(gamepad1.dpad_down)
+            {
+                upSlidePos = 1000;
+            } else if (gamepad1.y) {
+                upSlidePos = 0;
+            }
+
+            if (gamepad1.a) {
+                //Sample Horizontal
+                Wrist.setPosition(0.28);
+            } else {
+                //Sample Vertical
+                Wrist.setPosition(0);
             }
 
             //Claw Control
@@ -125,43 +156,26 @@ public class Mode_Scoring extends LinearOpMode {
                 Claw.setPosition(0.45);
             }
 
-            // Wrist control
-            if (gamepad1.a) {
-                //Sample Horizontal
-                Wrist.setPosition(0.28);
+            if (gamepad1.dpad_right) {
+                sideSlidePos = 600;
+
+            } else if (gamepad1.dpad_left && !Touch.isPressed()) {
+                sideSlidePos -= 20;
+            }
+            if (Touch.isPressed()) {
+                sideSlide.setPower(0.01);
+                sideSlidePos = 0;
+                sideSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                telemetry.addData("Pos", " = 0!");
             } else {
-                //Sample Vertical
-                Wrist.setPosition(0);
+                sideSlide.setPower(1);
             }
 
-            // Elbow Control
-            if (gamepad1.right_bumper && upSlidePos < 10)
-            {
-                //Elbow up && Slides retracted
-                Elbow.setPosition(0.56);
-                clawElbow.setPosition(1);
-            } else if (sideSlide.getCurrentPosition() <= 10 && gamepad1.left_bumper)
-            {
-                //Elbow down + Slides retracted
-                Elbow.setPosition(0.182);
-                clawElbow.setPosition(0.181);
-            }
-            else if(sideSlide.getCurrentPosition() > 10 && gamepad1.left_bumper)
-            {
-                //Elbow down + Slides extended
-                Elbow.setPosition(0.182);
-                clawElbow.setPosition(0.181);
-            }
-            else if(sideSlide.getCurrentPosition() > 10)
-            {
-                // Slides extended + Elbows up
-                Elbow.setPosition(0.299);
-                clawElbow.setPosition(0);
-            }
+            // SHOULD BE ABLE TO GO FROM 0, 1000 & 2000
 
             if(gamepad1.y)
             {
-                upSlidePos = 2000;
+                upSlidePos = 1000;
             }
 
             // Bucket Control
@@ -170,23 +184,42 @@ public class Mode_Scoring extends LinearOpMode {
             // Pressure = 1 --> up
 
             if (gamepad1.dpad_up) {
-                upSlidePos = 4000;
+                upSlidePos = 2000;
             } else if (gamepad1.dpad_down) {
                 upSlidePos = 0;
             }
 
-            if(upSlide.getCurrentPosition() > 600)
+            // Elbow Control
+//            if (gamepad1.right_bumper)
+//            {
+//                //Elbow up && Slides retracted
+//                Elbow.setPosition(0.559);
+//                clawElbow.setPosition(0.899);
+//            }
+            if (sideSlide.getCurrentPosition() <= 10 && gamepad1.left_bumper)
             {
-                Elbow.setPosition(0.02);
+                //Elbow down + Slides retracted
+                Elbow.setPosition(0.145);
+                clawElbow.setPosition(0.17);
+            }
+            else if(sideSlide.getCurrentPosition() > 10 && gamepad1.left_bumper)
+            {
+                //Elbow down + Slides extended
+                Elbow.setPosition(0.151);
+                clawElbow.setPosition(0.17);
+            }
+            else if(sideSlide.getCurrentPosition() > 10)
+            {
+                // Slides extended + Elbows up
+                Elbow.setPosition(0.299);
+                clawElbow.setPosition(0);
             }
 
+            // General buttons
             // Dedicated hang buttons for endgame
 
-            if(gamepad1.start && failSafe)
-            {
-                failSafe = false;
-            } else if (gamepad1.start && !failSafe){
-                failSafe = true;
+            if(gamepad1.start && failSafe) {
+                failSafe = !failSafe;
             }
 
             // Used to be gamepad1.right_stick_bumper && !failSafe
@@ -194,19 +227,19 @@ public class Mode_Scoring extends LinearOpMode {
                 hanging = !hanging;
                 upSlidePos = 700;
                 Bucket.setPosition(0.5);
-                Hangup.setTargetPosition(540);
-
+                Hangup.setTargetPosition(900);
+                // TEST HANG POS
             }
             else if (!hanging){
                 Bucket.setPosition(0.6*(gamepad1.right_trigger));
                 Hangup.setTargetPosition(0);
             }
 
-            if(gamepad1.right_trigger > 0.5) // if right trigger pressed go to 0.6
+            else if(!failSafe)
             {
-                Bucket.setPosition(0.6);
+                Bucket.setPosition(0.5);
             }
-            else if(gamepad1.right_trigger < 0.2) // if not pressed go to 0.1 and not primed for hang
+            else // if not pressed go to 0.1 and not primed for hang
             {
                 Bucket.setPosition(0.1);
             }
@@ -216,37 +249,11 @@ public class Mode_Scoring extends LinearOpMode {
                 HangPos = 16000;
                 hanged = true;
             }
-            else if(hanged){
-                HangPos = 3000;
+            else if(hanged && HangPos >= 15000){
+                HangPos = 3500;
             }
             else {
                 HangPos = 0;
-            }
-
-            if(gamepad2.a){
-                //down
-                ElbowS.setPosition(1);
-            }
-            else if(gamepad2.y){
-                //scoring
-                ElbowS.setPosition(0.5);
-            }
-            if(gamepad2.x){
-                //open
-                ClawS.setPosition(0.2);
-            }
-            else if(gamepad2.b){
-                //closed
-                ClawS.setPosition(0.5);
-            }
-
-            if(gamepad2.dpad_up)
-            {
-                upSlidePos = 1900;
-            }
-            else if(gamepad2.dpad_down)
-            {
-                upSlidePos = 1300;
             }
 
             //0.17 Elbow down
@@ -282,7 +289,7 @@ public class Mode_Scoring extends LinearOpMode {
             upSlide.setTargetPosition(upSlidePos);
             //sideSlidePos = Math.max(0, Math.min(550, sideSlidePos));
 
-            HangPos = Range.clip(HangPos, hanged ? 1000 : 0, 16000);
+            HangPos = Range.clip(HangPos, hanged ? 3500 : 0, 16000);
             Hang.setTargetPosition(HangPos);
 
             sideSlide.setTargetPosition(sideSlidePos);
@@ -362,6 +369,11 @@ public class Mode_Scoring extends LinearOpMode {
 
     //Display telemetry during opMode: All servos and both slides positions
     public void getTelemetry() {
+        if (myMode){
+            telemetry.addLine("You are in 'specimen mode'\n");
+        } else {
+            telemetry.addLine("You are in 'sample mode'\n");
+        }
         telemetry.addData("Elbow", Elbow.getPosition());
         telemetry.addData("Wrist", Wrist.getPosition());
         telemetry.addData("Claw", Claw.getPosition());

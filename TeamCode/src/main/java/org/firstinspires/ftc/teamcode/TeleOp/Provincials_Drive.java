@@ -12,8 +12,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.SensorREV2mDistance;
 
-@Disabled
-@TeleOp(name = "Provincials TeleOp")
+@TeleOp(name = "Sample Provincials")
 public class Provincials_Drive extends LinearOpMode {
 
 // CONTROLS FOR 1 GAME PAD:
@@ -194,7 +193,7 @@ public class Provincials_Drive extends LinearOpMode {
                 hanging = !hanging;
                 upSlidePos = 700;
                 Bucket.setPosition(0.5);
-                Hangup.setTargetPosition(740);
+                Hangup.setTargetPosition(1000);
 
             }
             else if (!hanging){
