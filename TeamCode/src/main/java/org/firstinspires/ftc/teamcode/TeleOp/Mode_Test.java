@@ -94,10 +94,11 @@ public class Mode_Test extends LinearOpMode {
             Hangup.setPower(1);
             Hang.setPower(1);
 
-            if (gamepad1.back && gamepad1.x){
+            if (gamepad1.back && gamepad1.y){
                 myMode = true; // sample mode
-            } else if (gamepad1.back && gamepad1.y){
+            } else if (gamepad1.back && gamepad1.x){
                 myMode = false; // specimen mode
+                ElbowS.setPosition(1);
             }
 
             if (gamepad1.left_stick_button) {
@@ -111,6 +112,36 @@ public class Mode_Test extends LinearOpMode {
             Move(setSpeed);
 
             if (myMode) {
+                if(gamepad1.left_bumper){
+                    //down
+                    ElbowS.setPosition(1);
+                }
+                else if(gamepad1.right_bumper){
+                    //scoring
+                    ElbowS.setPosition(0.5);
+                }
+                if(gamepad1.x){
+                    //open
+                    ClawS.setPosition(0.05);
+                }
+                else if(gamepad1.b){
+                    //closed
+                    ClawS.setPosition(0.5);
+                }
+
+                if(gamepad1.dpad_up)
+                {
+                    upSlidePos = 1900;
+                }
+                else if(gamepad1.dpad_down)
+                {
+                    upSlidePos = 1000;
+                } else if (gamepad1.y) {
+                    upSlidePos = 0;
+                }
+            }
+            else
+            {
                 if (gamepad1.a) {
                     //Sample Horizontal
                     Wrist.setPosition(0.28);
@@ -158,35 +189,30 @@ public class Mode_Test extends LinearOpMode {
                 } else if (gamepad1.dpad_down) {
                     upSlidePos = 0;
                 }
-            }
-            else
-            {
-                if(gamepad1.a){
-                    //down
-                    ElbowS.setPosition(1);
-                }
-                else if(gamepad1.right_bumper){
-                    //scoring
-                    ElbowS.setPosition(0.5);
-                }
-                if(gamepad1.left_bumper){
-                    //open
-                    ClawS.setPosition(0.05);
-                }
-                else if(gamepad1.b){
-                    //closed
-                    ClawS.setPosition(0.5);
-                }
 
-                if(gamepad1.dpad_up)
+                // Elbow Control
+                if (gamepad1.right_bumper)
                 {
-                    upSlidePos = 1900;
+                    //Elbow up && Slides retracted
+                    Elbow.setPosition(0.559);
+                    clawElbow.setPosition(0.899);
+                } else if (sideSlide.getCurrentPosition() <= 10 && gamepad1.left_bumper)
+                {
+                    //Elbow down + Slides retracted
+                    Elbow.setPosition(0.145);
+                    clawElbow.setPosition(0.17);
                 }
-                else if(gamepad1.dpad_down)
+                else if(sideSlide.getCurrentPosition() > 10 && gamepad1.left_bumper)
                 {
-                    upSlidePos = 1000;
-                } else if (gamepad1.y) {
-                    upSlidePos = 0;
+                    //Elbow down + Slides extended
+                    Elbow.setPosition(0.151);
+                    clawElbow.setPosition(0.17);
+                }
+                else if(sideSlide.getCurrentPosition() > 10)
+                {
+                    // Slides extended + Elbows up
+                    Elbow.setPosition(0.299);
+                    clawElbow.setPosition(0);
                 }
             }
 
@@ -349,9 +375,9 @@ public class Mode_Test extends LinearOpMode {
     //Display telemetry during opMode: All servos and both slides positions
     public void getTelemetry() {
         if (myMode){
-            telemetry.addLine("You are in 'sample mode'\n");
-        } else {
             telemetry.addLine("You are in 'specimen mode'\n");
+        } else {
+            telemetry.addLine("You are in 'sample mode'\n");
         }
         telemetry.addData("Elbow", Elbow.getPosition());
         telemetry.addData("Wrist", Wrist.getPosition());

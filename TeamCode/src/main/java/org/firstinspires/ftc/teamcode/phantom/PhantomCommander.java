@@ -168,8 +168,8 @@ public class PhantomCommander extends LinearOpMode {
    private double[] move_slides() {
        // disable movement commands when resetting
        if (resetting_state == 0) {
-           if (gamepad1.dpad_right) {
-               SS_position += 10;
+           if (gamepad1.dpad_right || gamepad1.dpad_up) {
+               SS_position = 600;
            } else if (gamepad1.dpad_left) {
                SS_position -= 10;
            }
