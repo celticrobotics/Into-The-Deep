@@ -165,11 +165,11 @@ public class Mode_Test extends LinearOpMode {
                     //down
                     ElbowS.setPosition(1);
                 }
-                else if(gamepad1.y){
+                else if(gamepad1.right_bumper){
                     //scoring
                     ElbowS.setPosition(0.5);
                 }
-                if(gamepad1.x){
+                if(gamepad1.left_bumper){
                     //open
                     ClawS.setPosition(0.05);
                 }
@@ -185,6 +185,8 @@ public class Mode_Test extends LinearOpMode {
                 else if(gamepad1.dpad_down)
                 {
                     upSlidePos = 1000;
+                } else if (gamepad1.y) {
+                    upSlidePos = 0;
                 }
             }
 
