@@ -127,6 +127,7 @@ public class Mode_Test extends LinearOpMode {
                 else if(gamepad1.b){
                     //closed
                     ClawS.setPosition(0.5);
+                    upSlidePos = 1900;
                 }
 
                 if(gamepad1.dpad_up)
