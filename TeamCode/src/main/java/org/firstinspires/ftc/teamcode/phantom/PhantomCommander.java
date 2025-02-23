@@ -306,7 +306,7 @@ public class PhantomCommander extends LinearOpMode {
     private double FL_velocity, FR_velocity, BL_velocity, BR_velocity;
     private int SS_position, US_position;
     private double bucket_value = 0.1, claw_value, claw_elbow_value = 0.17, elbow_value = 0.151, wrist_value;
-    private double claw_specimen_value = 0.2, elbow_specimen_value = 1;
+    private double claw_specimen_value = 0.5, elbow_specimen_value = 1;
 
     // state machines
     private int resetting_state = 0;
