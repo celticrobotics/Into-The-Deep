@@ -121,7 +121,7 @@ public class Specimen_Scoring extends LinearOpMode {
             }
             if(gamepad1.b){
                 //open
-                ClawS.setPosition(0.05);
+                ClawS.setPosition(0.1);
             }
             else if(gamepad1.x){
                 //closed
@@ -162,7 +162,7 @@ public class Specimen_Scoring extends LinearOpMode {
             } else if (gamepad1.dpad_left && !Touch.isPressed()) {
                 sideSlidePos -= 20;
             }
-            if (Touch.isPressed()) {
+            else if (Touch.isPressed()) {
                 sideSlide.setPower(0.01);
                 sideSlidePos = 0;
                 sideSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -231,7 +231,7 @@ public class Specimen_Scoring extends LinearOpMode {
                 // TEST HANG POS
             }
             else if (!hanging){
-                Bucket.setPosition(0.6*(gamepad1.right_trigger));
+                Bucket.setPosition(0.1);
                 Hangup.setTargetPosition(0);
             }
 

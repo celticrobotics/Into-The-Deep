@@ -110,10 +110,10 @@ public final class Hardware {
             elbow  = map.servo.get("Elbow");
             wrist  = map.servo.get("Claw Wrist");
 
-            bucket.setPosition(0);
+            bucket.setPosition(0.47);
             claw.setPosition(0.2);
-            claw_elbow.setPosition(0.17);
-            elbow.setPosition(0.151);
+            claw_elbow.setPosition(1);
+            elbow.setPosition(0.6);
             wrist.setPosition(0);
         }
 
@@ -121,7 +121,7 @@ public final class Hardware {
             claw_specimen = map.servo.get("Specimen Claw");
             elbow_specimen = map.servo.get("Specimen Elbow");
 
-            claw_specimen.setPosition(0.2);
+            claw_specimen.setPosition(.5);
             elbow_specimen.setPosition(1);
         }
     }

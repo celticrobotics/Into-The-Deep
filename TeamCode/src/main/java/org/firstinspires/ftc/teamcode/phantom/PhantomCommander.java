@@ -175,9 +175,9 @@ public class PhantomCommander extends LinearOpMode {
            }
 
            if (gamepad1.dpad_up) {
-               US_position = scoring_state == 0 ? 4_000 : 1900;
+               US_position = scoring_state == 0 ? 4_000 : 1700;
            } else if (gamepad1.y) {
-               US_position = scoring_state == 0 ? 2_000 : 1000;
+               US_position = scoring_state == 0 ? 2_000: 0;
            } else if (gamepad1.dpad_down) {
                US_position = 0;
            }
@@ -227,7 +227,8 @@ public class PhantomCommander extends LinearOpMode {
                 if (gamepad1.right_bumper) {  // up
                     elbow_value = 0.559;
                     claw_elbow_value = 0.899;
-                } else if (gamepad1.left_bumper && SS_position <= 10) {  // down
+                }
+                if (gamepad1.left_bumper && SS_position <= 10) {  // down
                     elbow_value = 0.145;
                     claw_elbow_value = 0.17;
                 } else if (gamepad1.left_bumper && SS_position > 10) {
@@ -245,7 +246,7 @@ public class PhantomCommander extends LinearOpMode {
                 }
             } else if (scoring_state == 1) {
                 if (gamepad1.x) {  // open
-                    claw_specimen_value = 0.05;
+                    claw_specimen_value = 0.1;
                 } else if (gamepad1.b) {  // closed
                     claw_specimen_value = 0.5;
                 }
@@ -291,7 +292,7 @@ public class PhantomCommander extends LinearOpMode {
      */
     private void scoring_mode_check() {
         if (gamepad1.start && previous_gamepad.start) {
-            scoring_state = (scoring_state + 1) % 3;
+            scoring_state = (scoring_state + 1) % 2;
         }
 
         telemetry.addLine(String.format(Locale.ROOT, "Current mode: %d", scoring_state));
@@ -310,5 +311,5 @@ public class PhantomCommander extends LinearOpMode {
 
     // state machines
     private int resetting_state = 0;
-    private int scoring_state = 0;
+    private int scoring_state = 1;
 }

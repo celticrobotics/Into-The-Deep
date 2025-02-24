@@ -82,8 +82,8 @@ public class Provincials_Drive extends LinearOpMode {
         sideSlide.setTargetPosition(0);
         Hangup.setTargetPosition(0);
         Hang.setTargetPosition(0);
-        ClawS.setPosition(0.2);
-        ElbowS.setPosition(1);
+//        ClawS.setPosition(0.2);
+//        ElbowS.setPosition(1);
 
         boolean hanging = false;
 
@@ -113,13 +113,13 @@ public class Provincials_Drive extends LinearOpMode {
             } else if (gamepad1.dpad_left && !Touch.isPressed()) {
                 sideSlidePos -= 20;
             }
-            if(Touch.isPressed())
+            else if(Touch.isPressed())
             {
                 sideSlide.setPower(0.01);
                 sideSlidePos = 0;
                 sideSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 telemetry.addData("Pos", " = 0!");
-            } else {
+            } else{
                 sideSlide.setPower(1);
             }
 
@@ -150,7 +150,7 @@ public class Provincials_Drive extends LinearOpMode {
             } else if (sideSlide.getCurrentPosition() <= 10 && gamepad1.left_bumper)
             {
                 //Elbow down + Slides retracted
-                Elbow.setPosition(0.145);
+                Elbow.setPosition(0.142);
                 clawElbow.setPosition(0.17);
             }
             else if(sideSlide.getCurrentPosition() > 10 && gamepad1.left_bumper)
